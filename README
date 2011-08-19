@@ -11,7 +11,7 @@ jruby -S gem install trinidad_valve_extension
 
 # CONFIGURATION
 
-This extension will configure valves from a list of hashes that contain the properties that configure each valve.  'className' is used to define what valve class is being configured, just as when configuring tomcat using the traditional context.xml
+This extension will configure valves from a list of hashes that contain the properties that configure each valve.  'className' is used to define what valve class is being configured, just as when configuring tomcat using the traditional context.xml. Substitutions are done with system properties for values referenced within ${}.
 
 To enable the extension, add the 'valve' element to the 'extensions' key and define at least one valve. An example of an AccessLogValve:
 

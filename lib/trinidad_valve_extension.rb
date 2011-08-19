@@ -1,12 +1,12 @@
 module Trinidad
   module Extensions
     module Valve
-      VERSION = '0.1'
+      VERSION = '0.2'
     end
 
     class ValveWebAppExtension < WebAppExtension
       def configure(tomcat, app_context)
-        logger = app_context.getLogger()
+        logger = app_context.logger
 
         @options[:valves] ||= Array.new
 
@@ -30,7 +30,7 @@ module Trinidad
             set_valve_properties(valve, valve_properties)
 
             # Add the valve to the context using the suggested getPipeline()
-            app_context.getPipeline().addValve(valve)
+            app_context.pipeline.add_valve(valve)
           end
         end
       end
@@ -42,8 +42,13 @@ module Trinidad
 
       def set_valve_properties(valve_instance, properties)
         properties.each do |option,value|
-          valve_instance.send("#{option}=", value)
+          valve_instance.send("#{option}=", replace_properties(value.to_s))
         end
+      end
+
+      def replace_properties(text)
+        java_import 'org.apache.tomcat.util.IntrospectionUtils'
+        IntrospectionUtils.replace_properties(text, java.lang.System.getProperties(), nil)
       end
     end
   end
