@@ -36,7 +36,7 @@ module Trinidad
       end
 
       def get_valve(valve_name)
-        valve_class = Java::JavaClass.for_name "org.apache.catalina.valves.AccessLogValve"
+        valve_class = Java::JavaClass.for_name valve_name
         valve_instance = valve_class.constructor.new_instance.to_java
       end
 
