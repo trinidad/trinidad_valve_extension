@@ -1,0 +1,33 @@
+Trinidad Valve Extension
+========================
+
+# DESCRIPTION
+
+This is an extension to allow Tomcat valves to be configured and attached to webapps running under Trinidad.  Any valve accessible within the classpath can be used.  Built-in Tomcat valves are available without extra dependencies. A list of available built-in valves can be found at: http://tomcat.apache.org/tomcat-7.0-doc/config/valve.html
+
+# INSTALLATION
+
+jruby -S gem install trinidad_valve_extension
+
+# CONFIGURATION
+
+This extension will configure valves from a list of hashes that contain the properties that configure each valve.  'className' is used to define what valve class is being configured, just as when configuring tomcat using the traditional context.xml
+
+To enable the extension, add the 'valve' element to the 'extensions' key and define at least one valve. An example of an AccessLogValve:
+
+---
+  extensions:
+    valve:
+      valves:
+        - className: "org.apache.catalina.valves.AccessLogValve"
+          directory:      "log"
+          prefix:         "access_log"
+          fileDateFormat: ".yyyy-MM-dd"
+          suffix:         ".log"
+          pattern:        "%h %l %u %t \"%r\" %s %b %T %S"
+
+
+You can find further information on how to write your own extension in the wiki: http://wiki.github.com/calavera/trinidad/extensions
+
+# Copyright
+Copyright (c) 2011 Michael Leinartas. See LICENSE for details.
