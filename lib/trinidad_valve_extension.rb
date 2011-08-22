@@ -1,12 +1,12 @@
 module Trinidad
   module Extensions
     module Valve
-      VERSION = '0.3'
+      VERSION = '0.4'
     end
 
     class ValveWebAppExtension < WebAppExtension
       def configure(tomcat, app_context)
-        logger = app_context.logger
+        @logger = app_context.logger
 
         @options[:valves] ||= Array.new
 
@@ -16,14 +16,14 @@ module Trinidad
             class_name = valve_properties.delete 'className'
 
             if not class_name
-              logger.warn("Tomcat valve defined without a 'className' attribute.  Skipping valve definition: '#{valve_properties.inspect}'")
+              @logger.warn("Tomcat valve defined without a 'className' attribute.  Skipping valve definition: '#{valve_properties.inspect}'")
               next
             end
 
             begin
               valve = get_valve(class_name)
             rescue NameError => e
-              logger.warn("Tomcat valve '#{class_name}' not found.  Ensure valve exists in your classpath")
+              @logger.warn("Tomcat valve '#{class_name}' not found.  Ensure valve exists in your classpath")
               next
             end
 
@@ -42,7 +42,17 @@ module Trinidad
 
       def set_valve_properties(valve_instance, properties)
         properties.each do |option,value|
-          valve_instance.send("#{option}=", replace_properties(value.to_s))
+          begin
+            if value.kind_of? String
+              value = replace_properties(value)
+            end
+          valve_instance.send("#{option}=", value)
+
+          rescue TypeError => e
+            @logger.warn("Incorrect type passed for property '#{option}' on valve '#{valve_instance.java_class}'. Skipping property")
+          rescue NoMethodError => e
+            @logger.warn("No settable property '#{option}' found on valve '#{valve_instance.java_class}'")
+          end
         end
       end
 
