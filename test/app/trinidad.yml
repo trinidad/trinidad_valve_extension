@@ -1,0 +1,15 @@
+---
+  environment: production
+  port: 4444
+  trap: false
+  extensions:
+    valve:
+      valves:
+        - className: "org.apache.catalina.valves.AccessLogValve"
+          pattern:        "%h %l %u %t \"%r\" %s %b %T %S"
+          directory:      "log"
+          prefix:         "xxx_access"
+          suffix:         ".xxx"
+          fileDateFormat: ".yyyy-MM-dd"
+        - className: org.apache.catalina.valves.CrawlerSessionManagerValve
+          sessionInactiveInterval: 42
