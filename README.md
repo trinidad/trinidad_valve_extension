@@ -22,6 +22,7 @@ Substitutions are done with system properties for values referenced within ${}.
 To enable the extension, add a *'valve'* element under the *'extensions'* key 
 (as usual) and define at least one valve. An example of an AccessLogValve:
 
+```
 ---
   extensions:
     valve:
@@ -32,6 +33,7 @@ To enable the extension, add a *'valve'* element under the *'extensions'* key
           fileDateFormat: ".yyyy-MM-dd"
           suffix:         ".log"
           pattern:        "%h %l %u %t \"%r\" %s %b %T %S"
+```
 
 # Copyright
 
