@@ -1,9 +1,5 @@
 module Trinidad
   module Extensions
-    module Valve
-      VERSION = '0.2'
-    end
-
     class ValveWebAppExtension < WebAppExtension
       def configure(tomcat, app_context)
         logger = app_context.logger
