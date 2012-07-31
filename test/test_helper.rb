@@ -6,4 +6,3 @@ require 'mocha'
 require "trinidad"
 
 $:.unshift(File.dirname(__FILE__) + '/../lib')
-require 'trinidad_valve_extension'

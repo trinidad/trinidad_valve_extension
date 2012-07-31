@@ -1,0 +1,12 @@
+---
+  trap: false
+  extensions:
+    valves:
+      AccessLogValve:
+        directory: logs
+        suffix: .log
+      crawler_session_manager_valve:
+        # leave defaults
+      remote_address_filter:
+        className: org.apache.catalina.valves.RemoteAddrValve
+        allow: "127\\.0\\.0\\.1"      

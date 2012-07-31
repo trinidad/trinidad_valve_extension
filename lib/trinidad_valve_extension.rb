@@ -4,29 +4,36 @@ module Trinidad
 
       def configure(tomcat, context)
         @logger = context.logger
-
-        valves = ( @options[:valves] ||= Array.new )
+        
+        if @options.has_key?(:valves) # 'old' syntax
+          valves = (@options[:valves] ||= Array.new)
+        else
+          valves = @options
+        end
 
         unless valves.empty?
-          valves.each do |valve_properties|
-            valve_properties = valve_properties.dup
-            class_name = valve_properties.delete :className
+          valves.each do |name, properties| # Hash or Array
+            if properties.nil? && name.is_a?(Hash)
+              properties, name = name, nil
+            end
+            properties = properties ? properties.dup : {}
+            class_name = properties.delete(:className) || name
 
             unless class_name
-              logger.warn "Tomcat valve defined without a 'className' attribute, " + 
-                          "skipping valve definition: #{valve_properties.inspect}"
+              logger.warn "Valve defined without a 'className' attribute, " + 
+                          "skipping valve definition: #{properties.inspect}"
               next
             end
 
             begin
-              valve = get_valve(class_name)
-            rescue NameError
-              @logger.warn "Tomcat valve '#{class_name}' not found, " + 
+              valve = get_valve(class_name.to_s)
+            rescue NameError => e
+              @logger.warn "Valve '#{class_name}' not found (#{e.message}), " + 
                            "ensure valve class is in your class-path"
               next
             end
 
-            set_valve_properties(valve, valve_properties)
+            set_valve_properties(valve, properties)
 
             # Add the valve to the context using the suggested getPipeline()
             context.pipeline.add_valve(valve)
@@ -37,7 +44,17 @@ module Trinidad
       protected
       
       def get_valve(valve_name)
-        valve_class = Java::JavaClass.for_name valve_name
+        class_name = valve_name.index('.') ? valve_name : camelize(valve_name)
+        begin
+          valve_class = Java::JavaClass.for_name(class_name)
+        rescue NameError => e
+          if class_name.index('.').nil?
+            class_name = "org.apache.catalina.valves.#{class_name}"
+            valve_class = Java::JavaClass.for_name(class_name)
+          else
+            raise e
+          end
+        end
         valve_class.constructor.new_instance.to_java
       end
 
@@ -57,6 +74,12 @@ module Trinidad
       end
 
       private
+      
+      def camelize(string)
+        string = string.sub(/^[a-z\d]*/) { $&.capitalize }
+        string.gsub!(/(?:_|(\/))([a-z\d]*)/i) { "#{$1}#{$2.capitalize}" }
+        string
+      end
       
       java_import 'org.apache.tomcat.util.IntrospectionUtils'
       
