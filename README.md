@@ -42,6 +42,7 @@ under the *extensions* key e.g. :
 Alternatively, you can still use the traditional (old) syntax using the *valve* 
 extension element with *valves* specified as an array e.g. :
 
+```
 ---
   extensions:
     valve:
