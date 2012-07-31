@@ -1,5 +1,6 @@
-== 0.5.0 (2012-07-30)
+== 0.5.0 (2012-07-31)
 
+* support for alternate (more intuitive) configuration
 * Trinidad 1.4.0 compatibility (use symbols as configuration Hash keys)
 * bundlify gem development & release process
 
