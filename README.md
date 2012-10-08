@@ -5,7 +5,8 @@ applications running under [Trinidad](https://github.com/trinidad/trinidad/).
 Built-in Tomcat valves or any valve implementation accessible within the 
 application's class-path can be used.
 
-A list of built-in valves can be found at: http://tomcat.apache.org/tomcat-7.0-doc/config/valve.html
+A list of built-in valves can be found at: 
+http://tomcat.apache.org/tomcat-7.0-doc/config/valve.html
 
 ## Installation
 
@@ -57,6 +58,18 @@ extension element with *valves* specified as an array e.g. :
           sessionInactiveInterval: 42
 ```
 
-# Copyright
+## Issues
 
-Copyright (c) 2011 Michael Leinartas. See LICENSE for details.
+Please note that some valves actually consume the input stream (request body), 
+which is being used, in case of requests such as POSTs, to parse parameters.
+`JRuby::Rack` passes the servlet env, including it's body, as is to `Rack` and 
+lets it handle parameter/cookie parsing. In such cases you might see missing 
+parameters within your requests - this is not a "bug" but an actual limitation 
+of the API and `JRuby::Rack` provides a "solution" for that by pre-parsing 
+request paramaters for `Rack` from the servlet request parameters.
+To try this out set `Rack::Handler::Servlet.env = :servlet` in an initializer.
+
+## Copyright
+
+Copyright (c) 2012 [Team Trinidad](https://github.com/trinidad). 
+See LICENSE (http://en.wikipedia.org/wiki/MIT_License) for details.

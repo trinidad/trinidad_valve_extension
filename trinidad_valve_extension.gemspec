@@ -22,8 +22,7 @@ Gem::Specification.new do |s|
   s.extra_rdoc_files = %w[ README.md LICENSE ]
   
   s.add_dependency('trinidad', '>= 1.3.5')
-  
   s.add_development_dependency('rake')
-  s.add_development_dependency('test-unit')
+  s.add_development_dependency('test-unit', '>= 2.4')
   s.add_development_dependency('mocha')
 end
